@@ -80,6 +80,73 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; margin: 0; text-wr
 .socios { background: rgba(15, 32, 56, .25); padding: 22px; }
 .pie { background: var(--ink); color: #9fb4c9; padding: 26px max(16px, 3vw); display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; font-size: .85rem; }
 
+/* ===== Animaciones con la rueda ===== */
+.kanji span { display: block; }
+.barra-scroll { position: fixed; inset: 0 0 auto 0; height: 3px; background: var(--shu); transform-origin: 0 50%; transform: scaleX(0); z-index: 50; }
+
+@keyframes subir { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: none; } }
+@keyframes crecer { to { transform: scaleX(1); } }
+@keyframes deriva { to { transform: translateY(140px); } }
+@keyframes entrar { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+/* Entrada de la portada (por tiempo) */
+.hero-in > div > * { animation: entrar .8s cubic-bezier(.2, .7, .2, 1) both; }
+.hero-in > div > :nth-child(2) { animation-delay: .12s; }
+.hero-in > div > :nth-child(3) { animation-delay: .24s; }
+.hero-in > div > :nth-child(4) { animation-delay: .36s; }
+.proximo { animation: entrar .9s .3s cubic-bezier(.2, .7, .2, 1) both; }
+
+/* Efectos ligados al scroll (solo navegadores que los soportan) */
+@supports (animation-timeline: view()) {
+  .barra-scroll { animation: crecer linear both; animation-timeline: scroll(root); }
+  .kanji span { animation: deriva linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+  .sec h2, .sub, .foto, .fila, .ev, .vacio, .lugar, .contacto > div, .chips {
+    animation: subir linear both; animation-timeline: view(); animation-range: entry 0% entry 55%;
+  }
+  .foto { animation-name: subir; }
+}
+
+/* El camino: sección fija que reacciona a la rueda */
+.camino { background: var(--ink); color: #eef3f8; position: relative; }
+.camino[data-js] { height: 480vh; }
+.camino-fijo { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; max-width: 1180px; margin-inline: auto; padding: 56px max(16px, 3vw); }
+.camino[data-js] .camino-fijo { position: sticky; top: 0; height: 100svh; padding-block: 0; }
+.camino .etiqueta { color: #8fb4d3; }
+.camino h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); margin: 8px 0 0; }
+.pasos { position: relative; margin-top: 22px; display: grid; gap: 22px; }
+.camino[data-js] .pasos { display: block; min-height: 12.5rem; }
+.paso-nombre { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: #7cc4ec; }
+.paso h3 { font-size: clamp(1.4rem, 3vw, 1.9rem); margin: 6px 0 8px; }
+.paso p { margin: 0; color: #c4d3e2; max-width: 44ch; }
+.camino[data-js] .paso { position: absolute; inset: 0 0 auto 0; opacity: 0; transform: translateY(26px); transition: opacity .45s ease, transform .45s ease; pointer-events: none; }
+.camino[data-paso="0"] .paso[data-i="0"], .camino[data-paso="1"] .paso[data-i="1"],
+.camino[data-paso="2"] .paso[data-i="2"], .camino[data-paso="3"] .paso[data-i="3"] { opacity: 1; transform: none; }
+.avance { height: 2px; background: #2f4a68; margin-top: 18px; max-width: 320px; }
+.avance i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--shu); }
+.camino:not([data-js]) .avance { display: none; }
+
+.escenario { position: relative; width: 100%; max-width: 520px; aspect-ratio: 1; justify-self: center; }
+.escenario svg { position: relative; z-index: 1; width: 100%; height: 100%; overflow: visible; }
+.gran-kanji { position: absolute; inset: 0; display: grid; place-items: center; }
+.gran-kanji span { grid-area: 1 / 1; font-family: var(--serif); font-weight: 800; font-size: clamp(11rem, 26vw, 19rem); line-height: 1; color: transparent; -webkit-text-stroke: 1.5px #34506f; opacity: 0; transition: opacity .5s ease; }
+.camino:not([data-js]) .gran-kanji span:first-child { opacity: 1; }
+.camino[data-paso="0"] .gran-kanji span[data-i="0"], .camino[data-paso="1"] .gran-kanji span[data-i="1"],
+.camino[data-paso="2"] .gran-kanji span[data-i="2"], .camino[data-paso="3"] .gran-kanji span[data-i="3"] { opacity: 1; }
+.enso { fill: none; stroke: #7cc4ec; stroke-width: 9; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: .06; transform: rotate(-90deg); transform-origin: 200px 200px; opacity: .9; }
+.sol { fill: var(--shu); }
+.hoja { stroke: #eef3f8; stroke-width: 7; stroke-linecap: round; }
+.mango { stroke: #8fb4d3; stroke-width: 11; stroke-linecap: round; }
+.tsuba { fill: var(--shu); }
+.destello { fill: none; stroke: var(--shu); stroke-width: 4; transition: opacity .25s ease; }
+
+@media (max-width: 720px) {
+  .camino-fijo { grid-template-columns: 1fr; gap: 12px; }
+  .camino[data-js] .camino-fijo { grid-template-rows: minmax(0, 1fr) auto; padding-block: 12px; }
+  .escenario { order: -1; max-height: 44svh; width: auto; height: 100%; aspect-ratio: 1; }
+  .camino[data-js] .pasos { min-height: 10.5rem; }
+  .camino h2 { font-size: 1.5rem; }
+}
+
 @media (max-width: 720px) {
   .enlaces .l { display: none; }
   .marca { font-size: .95rem; }
@@ -90,4 +157,8 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; margin: 0; text-wr
   .fila { grid-template-columns: 5.5rem 1fr; }
   .fila .hora { grid-column: 2; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .barra-scroll { display: none; }
+}

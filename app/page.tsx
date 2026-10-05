@@ -2,6 +2,7 @@ import { DIAS, club, horarios } from "@/lib/club";
 import { obtenerEventosPublicos } from "@/lib/eventos";
 import { ProximoEvento } from "@/components/proximo-evento";
 import { Eventos } from "@/components/eventos";
+import { Camino } from "@/components/camino";
 
 // Los eventos se refrescan como máximo cada 5 minutos.
 export const revalidate = 300;
@@ -21,17 +22,19 @@ export default async function Inicio() {
 
   return (
     <>
+      <div className="barra-scroll" aria-hidden="true" />
       <header className="hero">
         <nav className="nav" aria-label="Principal">
           <a className="marca" href="#inicio"><Marca /><span>{club.nombre}</span></a>
           <div className="enlaces">
+            <a className="l" href="#camino">El camino</a>
             <a className="l" href="#club">El club</a>
             <a className="l" href="#horarios">Horarios</a>
             <a className="l" href="#eventos">Eventos</a>
             <a className="btn contorno" href={club.panelUrl}>Acceso socios</a>
           </div>
         </nav>
-        <div className="kanji" aria-hidden="true">剣道</div>
+        <div className="kanji" aria-hidden="true"><span>剣道</span></div>
         <div className="hero-in" id="inicio">
           <div>
             <p className="etiqueta"><span className="punto" />{club.ciudad} · {club.region}</p>
@@ -44,6 +47,8 @@ export default async function Inicio() {
       </header>
 
       <main>
+        <Camino />
+
         <section className="sec about" id="club">
           <div className="foto" role="img" aria-label="Espacio reservado para una foto del dojo">Foto del dojo</div>
           <div>
